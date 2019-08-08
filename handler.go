@@ -37,12 +37,14 @@ type pathConfig struct {
 	repo    string
 	display string
 	vcs     string
+	subpackages []string
 }
 
 type repo struct {
 	Repo    string `yaml:"repo,omitempty"`
 	Display string `yaml:"display,omitempty"`
 	VCS     string `yaml:"vcs,omitempty"`
+	Subpackages []string `yaml:subpackages,omitempty`
 }
 
 func newHandler(config []byte) (*handler, error) {
@@ -69,6 +71,7 @@ func newHandler(config []byte) (*handler, error) {
 			repo:    e.Repo,
 			display: e.Display,
 			vcs:     e.VCS,
+			subpackages: e.Subpackages,
 		}
 		switch {
 		case e.Display != "":
@@ -139,6 +142,7 @@ func (h *handler) serveIndex(w http.ResponseWriter, r *http.Request) {
 			Repo:    v.repo,
 			Display: v.display,
 			VCS:     v.vcs,
+			Subpackages: v.subpackages,
 		}
 		p[v.path] = r
 	}
@@ -168,8 +172,15 @@ var indexTmpl = template.Must(template.New("index").Parse(`<!DOCTYPE html>
 <html>
 <head>
 {{ .Host }}
-{{ range $key, $value := .Paths }}
+{{ $Paths := .Paths }}
+{{ range $value := $Paths }}
+{{ $Subpackages := $value.Subpackages }}
 <meta name="go-import" content="{{ $.Host }} {{ $value.VCS }} {{ $value.Repo }}">
+	{{- if len $Subpackages | ne 0 }}
+		{{- range $element := $Subpackages }}
+<meta name="go-import" content="{{ $.Host }} {{ $value.VCS }} {{ $value.Repo }}/{{ $element }}">
+		{{ end }}
+	{{ end }}
 {{ end }}
 </head>
 <h1>{{.Host}}</h1>

@@ -39,15 +39,17 @@ type pathConfig struct {
 	vcs     string
 }
 
+type repo struct {
+	Repo    string `yaml:"repo,omitempty"`
+	Display string `yaml:"display,omitempty"`
+	VCS     string `yaml:"vcs,omitempty"`
+}
+
 func newHandler(config []byte) (*handler, error) {
 	var parsed struct {
 		Host     string `yaml:"host,omitempty"`
 		CacheAge *int64 `yaml:"cache_max_age,omitempty"`
-		Paths    map[string]struct {
-			Repo    string `yaml:"repo,omitempty"`
-			Display string `yaml:"display,omitempty"`
-			VCS     string `yaml:"vcs,omitempty"`
-		} `yaml:"paths,omitempty"`
+		Paths    map[string]repo `yaml:"paths,omitempty"`
 	}
 	if err := yaml.Unmarshal(config, &parsed); err != nil {
 		return nil, err
@@ -129,12 +131,26 @@ func (h *handler) serveIndex(w http.ResponseWriter, r *http.Request) {
 	for i, h := range h.paths {
 		handlers[i] = host + h.path
 	}
+
+	p := map[string]repo{}
+
+	for _, v := range h.paths {
+		r := repo{
+			Repo:    v.repo,
+			Display: v.display,
+			VCS:     v.vcs,
+		}
+		p[v.path] = r
+	}
+
 	if err := indexTmpl.Execute(w, struct {
 		Host     string
 		Handlers []string
+		Paths	map[string]repo
 	}{
 		Host:     host,
 		Handlers: handlers,
+		Paths:	  p,
 	}); err != nil {
 		http.Error(w, "cannot render the page", http.StatusInternalServerError)
 	}
@@ -150,6 +166,12 @@ func (h *handler) Host(r *http.Request) string {
 
 var indexTmpl = template.Must(template.New("index").Parse(`<!DOCTYPE html>
 <html>
+<head>
+{{ .Host }}
+{{ range $key, $value := .Paths }}
+<meta name="go-import" content="{{ $.Host }} {{ $value.VCS }} {{ $value.Repo }}">
+{{ end }}
+</head>
 <h1>{{.Host}}</h1>
 <ul>
 {{range .Handlers}}<li><a href="https://godoc.org/{{.}}">{{.}}</a></li>{{end}}

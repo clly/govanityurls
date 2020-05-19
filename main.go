@@ -43,8 +43,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	srv := &http.Server{
-		Addr:              ":8080",
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+    srv := &http.Server{
+		Addr:              ":"+port,
 		Handler:           h,
 		TLSConfig:         nil,
 		ReadTimeout:       5 * time.Second,

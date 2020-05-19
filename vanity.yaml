@@ -1,8 +1,9 @@
-host: rakyll.pizza
+host: go.clly.me
 
 paths:
-  /portmidi:
-    repo: https://github.com/rakyll/portmidi
-
-  /launchpad:
-    repo: https://github.com/rakyll/launchpad
+  /fallingstar:
+    repo: ssh://github.com/clly/fallingstar
+    vcs: git
+  /connect:
+    repo: https://github.com/clly/connect
+    vcs: git

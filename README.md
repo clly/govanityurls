@@ -1,9 +1,22 @@
 # Go Vanity URLs
 
-Go Vanity URLs is a simple App Engine Go app that allows you
+Go Vanity URLs is a simple Go server that allows you
 to set custom import paths for your Go packages.
+It also can run on Google App Engine.
 
 ## Quickstart
+
+Install and run the binary:
+
+```
+$ go get -u github.com/clly/govanityurls
+$ # update vanity.yaml
+$ govanityurls
+$ # open http://localhost:8080
+```
+
+
+### Google App Engine
 
 Install [gcloud](https://cloud.google.com/sdk/downloads) and install Go App Engine component:
 
@@ -15,8 +28,8 @@ Setup a [custom domain](https://cloud.google.com/appengine/docs/standard/python/
 
 Get the application:
 ```
-go get -u -d github.com/GoogleCloudPlatform/govanityurls
-cd $(go env GOPATH)/src/github.com/GoogleCloudPlatform/govanityurls
+git clone https://github.com/clly/govanityurls
+cd govanityurls
 ```
 
 Edit `vanity.yaml` to add any number of git repos. E.g., `customdomain.com/portmidi` will

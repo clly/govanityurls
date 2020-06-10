@@ -30,8 +30,26 @@ jobs:
             dep ensure
         fi
 
-    - name: Build
-      run: go build -v .
-
     - name: Test
-      run: go test -v .
+      run: |
+        go test -v ./...
+        go test -v -race ./...
+ 
+    - name: Make dist
+      run: |
+        if [ ! -d dist ]; then
+          mkdir dist
+        fi
+
+    - name: Build
+      run: go build -v -o dist/govanityurls .
+
+    - name: upload-binary
+      uses: actions/upload-artifact@v2
+      with: 
+        path: dist
+
+    - name: upload-event
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{ github.event_path }}

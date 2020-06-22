@@ -54,6 +54,14 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         path: ${{ github.event_path }}
+    - run: cat $GITHUB_EVENT_PATH
+    - run: echo ${{ github.event_name }}
+    - run: echo ${{ github.event.action }}
+    - run: env
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
   bump_version:
     needs: build
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == 'true'

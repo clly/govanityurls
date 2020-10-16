@@ -95,7 +95,10 @@ jobs:
             MAJOR=${MINOR%.*}
             TAGS="${TAGS},${{github.repository}}:${MAJOR},${{github.repository}}:${MINOR}"
           fi
-          TAGS="${TAGS},${{github.repository}}:${VERSION},${{github.repository}}:${GITHUB_SHA::8}"
+          if [[ ! -z $VERSION ]]; then
+            TAGS="${TAGS},${{github.repository}}:${VERSION}
+          fi
+          TAGS="${TAGS},${{github.repository}}:${GITHUB_SHA::8}"
           echo ::set-output name=tags::${TAGS}
 
 
@@ -119,4 +122,12 @@ jobs:
         with:
           push: true
           tags: ${{ steps.extract-tags.outputs.tags }}
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build-docker-image
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          path: dist
 
+      - run: ls -lR

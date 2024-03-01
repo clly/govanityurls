@@ -1,0 +1,13 @@
+[Unit]
+Description=govanityurls
+
+[Service]
+Type=simple
+ExecStartPre=-/usr/bin/docker kill govanityurls
+ExecStartPre=-/usr/bin/docker rm govanityurls
+ExecStartPre=-/usr/bin/docker pull "clly/govanityurls"
+ExecStart=/usr/bin/docker run --rm -p 8083:8080 -u nobody --entrypoint /app/govanityurls --name govanityurls clly/govanityurls:v4
+ExecStop=/usr/bin/docker stop govanityurls
+
+[Install]
+WantedBy=default.target

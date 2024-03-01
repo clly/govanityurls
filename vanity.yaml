@@ -1,9 +1,14 @@
 host: go.clly.me
-
 paths:
   /fallingstar:
-    repo: ssh://github.com/clly/fallingstar
+    repo: ssh://github.com:clly/fallingstar
     vcs: git
+  /goboot:
+    repo: ssh://github.com:clly/goboot.git
+    vcs: git
+    subpackages:
+      - daemon
+      - logger
   /connect:
-    repo: https://github.com/clly/connect
+    repo: ssh://github.com:clly/connect.git
     vcs: git

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 // modified by clly: 08/02/2019
-//+build !appengine
+//go:build !appengine
+// +build !appengine
 
 package main
 
@@ -49,8 +50,10 @@ func main() {
 		port = "8080"
 	}
 
-    srv := &http.Server{
-		Addr:              ":"+port,
+	log.Println("Starting on", port)
+
+	srv := &http.Server{
+		Addr:              ":" + port,
 		Handler:           h,
 		TLSConfig:         nil,
 		ReadTimeout:       5 * time.Second,

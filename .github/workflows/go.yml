@@ -68,6 +68,7 @@ jobs:
       - name: Extract Tags
         id: extract-tags
         run: |
+          set -x
           TAGS="${{github.repository}}:latest"
           if [[ $GITHUB_REF == refs/heads/* ]]; then
             VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
